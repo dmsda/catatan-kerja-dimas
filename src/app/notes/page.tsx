@@ -30,7 +30,7 @@ export default function NotesPage() {
       content: "",
       tags: [],
     })
-    router.push(`/notes/${newId}`)
+    router.push(`/notes/editor?id=${newId}`)
   }
 
   const formatRelativeTime = (timestamp: number) => {
@@ -94,7 +94,7 @@ export default function NotesPage() {
                     <FileText className="w-5 h-5 text-foreground stroke-[2px]" />
                   </div>
                   <div>
-                    <Link href={`/notes/${note.id}`} className="font-heading font-bold text-lg hover:underline decoration-2 underline-offset-4 flex items-center gap-2">
+                    <Link href={`/notes/editor?id=${note.id}`} className="font-heading font-bold text-lg hover:underline decoration-2 underline-offset-4 flex items-center gap-2">
                       {note.title}
                       {note.isFavorite && <Star className="w-4 h-4 fill-secondary text-border stroke-[2px]" />}
                     </Link>

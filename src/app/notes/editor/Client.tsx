@@ -5,14 +5,14 @@ import { AppLayout } from "@/components/layout/AppLayout"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Save, Share2, MoreVertical, Star, Trash2 } from "lucide-react"
 import Link from "next/link"
-import { useParams, useRouter } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { NoteEditor } from "@/components/modules/Editor"
 import { useNotesStore } from "@/store/useNotesStore"
 
 export default function NoteDetailPage() {
-  const params = useParams()
+  const searchParams = useSearchParams()
   const router = useRouter()
-  const noteId = params.id as string
+  const noteId = searchParams.get('id') as string
   
   const note = useNotesStore(state => state.getNote(noteId))
   const updateNote = useNotesStore(state => state.updateNote)

@@ -59,7 +59,7 @@ export default function FavoritesNotesPage() {
                     <FileText className="w-5 h-5 text-foreground stroke-[2px]" />
                   </div>
                   <div>
-                    <Link href={`/notes/${note.id}`} className="font-heading font-bold text-lg hover:underline decoration-2 underline-offset-4 flex items-center gap-2">
+                    <Link href={`/notes/editor?id=${note.id}`} className="font-heading font-bold text-lg hover:underline decoration-2 underline-offset-4 flex items-center gap-2">
                       {note.title || 'Tanpa Judul'}
                     </Link>
                     <div className="flex flex-wrap items-center gap-3 mt-1 text-xs font-body text-muted-foreground">
