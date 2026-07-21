@@ -69,7 +69,6 @@ export const useTasksStore = create<TasksState>()(
     }),
     {
       name: 'dimas-tasks-storage',
-      storage: createJSONStorage(() => localStorage), 
     }
   )
 )
