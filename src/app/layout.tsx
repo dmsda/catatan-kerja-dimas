@@ -22,6 +22,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Catatan Kerja Dimas",
   description: "Personal Work Operating System",
+  manifest: "/manifest.json",
 };
 
 export const viewport = {
