@@ -48,7 +48,6 @@ export const useBookmarksStore = create<BookmarksState>()(
     }),
     {
       name: 'dimas-bookmarks-storage',
-      storage: createJSONStorage(() => localStorage), 
     }
   )
 )

@@ -4,20 +4,35 @@ import * as React from "react"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { Button } from "@/components/ui/button"
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus } from "lucide-react"
+import { useTasksStore } from "@/store/useTasksStore"
+import { useMeetingsStore } from "@/store/useMeetingsStore"
 
-// Dummy Data
 const DAYS_OF_WEEK = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"]
-const DUMMY_EVENTS: Record<number, { title: string; type: 'meeting' | 'task' | 'deadline' }[]> = {
-  14: [{ title: "Sync Mingguan", type: "meeting" }],
-  15: [{ title: "Deadline PRD", type: "deadline" }],
-  18: [{ title: "Review Desain", type: "task" }],
-  23: [{ title: "1-on-1 CTO", type: "meeting" }, { title: "Bayar Server", type: "task" }],
-}
 
 export default function CalendarPage() {
-  const currentMonth = "Juli 2026"
-  const totalDays = 31
-  const startingDayOffset = 2 // Starts on Wednesday (0=Monday, 1=Tuesday, 2=Wednesday)
+  const [currentDate, setCurrentDate] = React.useState(() => {
+    const d = new Date()
+    d.setDate(1) // Always start at 1st of month
+    return d
+  })
+
+  const tasks = useTasksStore(state => state.tasks)
+  const meetings = useMeetingsStore(state => state.meetings)
+
+  const monthName = currentDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })
+  const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate()
+  
+  // Calculate starting day (0 = Sunday in JS, we want 0 = Senin)
+  let firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay()
+  let startingDayOffset = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1
+
+  const prevMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))
+  }
+  
+  const nextMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1))
+  }
 
   return (
     <AppLayout>
@@ -32,18 +47,14 @@ export default function CalendarPage() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" onClick={prevMonth}>
               <ChevronLeft className="w-5 h-5 stroke-[2px]" />
             </Button>
-            <Button variant="outline" className="font-bold min-w-[120px]">
-              {currentMonth}
+            <Button variant="outline" className="font-bold min-w-[150px]">
+              {monthName}
             </Button>
-            <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" onClick={nextMonth}>
               <ChevronRight className="w-5 h-5 stroke-[2px]" />
-            </Button>
-            <Button variant="default" className="ml-2">
-              <Plus className="w-4 h-4 mr-2 stroke-[2px]" />
-              Acara
             </Button>
           </div>
         </div>
@@ -67,10 +78,15 @@ export default function CalendarPage() {
             ))}
 
             {/* Actual Days */}
-            {Array.from({ length: totalDays }).map((_, i) => {
+            {Array.from({ length: daysInMonth }).map((_, i) => {
               const dayNum = i + 1
-              const isToday = dayNum === 20 // Dummy today
-              const events = DUMMY_EVENTS[dayNum] || []
+              const currentBoxDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNum).setHours(0,0,0,0)
+              const todayTime = new Date().setHours(0,0,0,0)
+              const isToday = currentBoxDate === todayTime
+              
+              // Find events for this day
+              const dayTasks = tasks.filter(t => t.dueDate && new Date(t.dueDate).setHours(0,0,0,0) === currentBoxDate)
+              const dayMeetings = meetings.filter(m => new Date(m.date).setHours(0,0,0,0) === currentBoxDate)
 
               return (
                 <div 
@@ -86,13 +102,20 @@ export default function CalendarPage() {
                   </span>
                   
                   <div className="flex-1 flex flex-col gap-1 overflow-y-auto">
-                    {events.map((ev, idx) => (
+                    {dayMeetings.map((ev, idx) => (
                       <div 
-                        key={idx} 
-                        className={`text-xs px-1.5 py-1 rounded-[4px] border border-border font-bold truncate ${
-                          ev.type === 'deadline' ? 'bg-destructive text-destructive-foreground' :
-                          ev.type === 'meeting' ? 'bg-secondary text-secondary-foreground' : 'bg-background text-foreground'
-                        }`}
+                        key={`m-${idx}`} 
+                        className="text-[10px] px-1.5 py-1 rounded-[4px] border border-border font-bold truncate bg-secondary text-secondary-foreground"
+                        title={ev.title}
+                      >
+                        {ev.time.split(' ')[0]} {ev.title}
+                      </div>
+                    ))}
+                    {dayTasks.map((ev, idx) => (
+                      <div 
+                        key={`t-${idx}`} 
+                        className={`text-[10px] px-1.5 py-1 rounded-[4px] border border-border font-bold truncate ${ev.completed ? 'opacity-50 line-through bg-muted' : 'bg-destructive text-destructive-foreground'}`}
+                        title={ev.title}
                       >
                         {ev.title}
                       </div>
@@ -107,7 +130,7 @@ export default function CalendarPage() {
             })}
             
             {/* Padding at the end of grid */}
-            {Array.from({ length: (7 - ((totalDays + startingDayOffset) % 7)) % 7 }).map((_, i) => (
+            {Array.from({ length: (7 - ((daysInMonth + startingDayOffset) % 7)) % 7 }).map((_, i) => (
               <div key={`end-${i}`} className="min-h-[120px] p-2 border-r-2 border-b-2 border-border bg-muted/30 last:border-r-0"></div>
             ))}
           </div>

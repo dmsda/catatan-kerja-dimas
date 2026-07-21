@@ -5,6 +5,7 @@ import { AppLayout } from "@/components/layout/AppLayout"
 import { Folder, Plus, FileText, ChevronRight } from "lucide-react"
 import { useNotesStore } from "@/store/useNotesStore"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export default function FolderNotesPage() {
   const notes = useNotesStore((state) => state.notes)
@@ -56,25 +57,24 @@ export default function FolderNotesPage() {
           /* Folder Grid Pattern */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {folders.map((folder, idx) => (
-              <div 
-                key={idx} 
-                className="group flex flex-col p-5 border-2 border-border bg-card rounded-[12px] shadow-retro-md hover:-translate-y-[4px] hover:shadow-retro-lg transition-all cursor-pointer"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-3 border-2 border-border bg-muted rounded-[8px]">
-                    <Folder className="w-6 h-6 stroke-[2px]" />
+              <Link href="/notes" key={idx} className="block">
+                <div className="group flex flex-col p-5 border-2 border-border bg-card rounded-[12px] shadow-retro-md hover:-translate-y-[4px] hover:shadow-retro-lg transition-all cursor-pointer h-full">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="p-3 border-2 border-border bg-muted rounded-[8px]">
+                      <Folder className="w-6 h-6 stroke-[2px]" />
+                    </div>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <ChevronRight className="w-5 h-5 stroke-[2px]" />
+                    </Button>
                   </div>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <ChevronRight className="w-5 h-5 stroke-[2px]" />
-                  </Button>
+                  
+                  <h3 className="font-heading font-bold text-xl mb-1">{folder.name}</h3>
+                  <div className="flex items-center gap-1 text-sm font-body text-muted-foreground mt-auto">
+                    <FileText className="w-4 h-4" />
+                    {folder.count} Dokumen
+                  </div>
                 </div>
-                
-                <h3 className="font-heading font-bold text-xl mb-1">{folder.name}</h3>
-                <div className="flex items-center gap-1 text-sm font-body text-muted-foreground mt-auto">
-                  <FileText className="w-4 h-4" />
-                  {folder.count} Dokumen
-                </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}

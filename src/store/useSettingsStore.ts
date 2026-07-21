@@ -14,7 +14,6 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: 'dimas-settings-storage',
-      storage: createJSONStorage(() => localStorage), 
     }
   )
 )

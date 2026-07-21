@@ -12,6 +12,7 @@ const SETTINGS_TABS = [
   { id: 'backup', label: 'Backup', icon: HardDriveDownload },
   { id: 'import', label: 'Import', icon: Upload },
   { id: 'export', label: 'Export', icon: Download },
+  { id: 'sync', label: 'Cloudflare Sync', icon: Database },
   { id: 'keyboard', label: 'Keyboard Shortcut', icon: Keyboard },
 ]
 
